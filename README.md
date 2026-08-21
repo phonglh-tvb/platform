@@ -14,6 +14,8 @@ Nx monorepo: một Next.js app, một NestJS API, và các thư viện dùng chu
 Tooling: **SWC** để build API (không dùng webpack), **Vitest** cho unit test,
 **Playwright** cho e2e của web, ESLint + Prettier, TypeScript project references.
 
+Ghi chú học tập và lý do đằng sau các quyết định kỹ thuật nằm ở [docs/](docs/).
+
 ## Bắt đầu
 
 ```sh
