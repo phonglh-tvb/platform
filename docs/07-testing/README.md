@@ -37,7 +37,7 @@ _(chưa có file nào)_
 - [ ] Locator, auto-waiting
 - [ ] `webServer` trong config — tự khởi động app trước khi test
 - [ ] Trace, screenshot khi fail
-- [ ] `npx playwright install` (chưa cài trên máy này)
+- [ ] `pnpm playwright install` (chưa cài trên máy này)
 
 ## Xem trong repo
 

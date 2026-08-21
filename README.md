@@ -18,32 +18,61 @@ Ghi chú học tập và lý do đằng sau các quyết định kỹ thuật n�
 
 ## Bắt đầu
 
+Package manager là **pnpm**, phiên bản ghim trong `packageManager` của
+`package.json`. Bật corepack một lần là xong, không cần cài pnpm thủ công:
+
 ```sh
-npm install
+corepack enable
+pnpm install
 cp .env.example .env
-npm run dev          # chạy song song web (3000) + api (3333)
+pnpm dev          # chạy song song web (3000) + api (3333)
 ```
 
-Riêng lẻ: `npm run dev:web`, `npm run dev:api`.
+Riêng lẻ: `pnpm dev:web`, `pnpm dev:api`.
+
+### Vì sao pnpm
+
+Ngoài chuyện nhanh và nhẹ đĩa, [pnpm-workspace.yaml](pnpm-workspace.yaml) bật ba
+lớp phòng thủ mà npm CLI không có:
+
+| Cấu hình             | Tác dụng                                                  |
+| -------------------- | --------------------------------------------------------- |
+| `minimumReleaseAge`  | Package phải publish đủ 24h mới cho cài                   |
+| `strictDepBuilds`    | Install **fail** nếu có install script chưa được duyệt    |
+| `blockExoticSubdeps` | Chặn transitive dep kéo code từ git repo hoặc tarball URL |
+
+Thêm nữa, `node_modules` của pnpm dựng bằng symlink nên mỗi project chỉ thấy
+đúng dependency nó khai báo. Với npm hoisting phẳng, code có thể `import` một
+package không hề khai báo và vẫn chạy trên máy — rồi vỡ khi đóng gói.
+
+Cần cài gấp một bản vừa phát hành (bỏ qua khoảng chờ 24h):
+
+```sh
+pnpm add <pkg> --config.minimumReleaseAge=0
+```
+
+Dependency mới cần chạy install script thì `pnpm install` sẽ fail kèm hướng dẫn;
+duyệt bằng `pnpm approve-builds` rồi đọc lại diff của `pnpm-workspace.yaml`
+trước khi commit.
 
 ## Scripts
 
-| Script              | Việc nó làm                                    |
-| ------------------- | ---------------------------------------------- |
-| `npm run dev`       | Dev server cho cả web và api                   |
-| `npm run build`     | Build tất cả project                           |
-| `npm test`          | Vitest cho mọi project                         |
-| `npm run e2e`       | Playwright (web) + Vitest e2e (api)            |
-| `npm run lint`      | ESLint                                         |
-| `npm run typecheck` | `tsc --build` theo project references          |
-| `npm run affected`  | Chỉ chạy lint/test/build cho phần bị ảnh hưởng |
-| `npm run format`    | Prettier                                       |
-| `npm run graph`     | Mở project graph                               |
-| `npm run docker:up` | `docker compose up --build`                    |
+| Script           | Việc nó làm                                    |
+| ---------------- | ---------------------------------------------- |
+| `pnpm dev`       | Dev server cho cả web và api                   |
+| `pnpm build`     | Build tất cả project                           |
+| `pnpm test`      | Vitest cho mọi project                         |
+| `pnpm e2e`       | Playwright (web) + Vitest e2e (api)            |
+| `pnpm lint`      | ESLint                                         |
+| `pnpm typecheck` | `tsc --build` theo project references          |
+| `pnpm affected`  | Chỉ chạy lint/test/build cho phần bị ảnh hưởng |
+| `pnpm format`    | Prettier                                       |
+| `pnpm graph`     | Mở project graph                               |
+| `pnpm docker:up` | `docker compose up --build`                    |
 
 ## Git hooks & quy ước commit
 
-Husky cài hook tự động khi `npm install` (qua script `prepare`).
+Husky cài hook tự động khi `pnpm install` (qua script `prepare`).
 
 | Hook         | Chạy gì                                                      |
 | ------------ | ------------------------------------------------------------ |
@@ -91,11 +120,11 @@ trong Docker nó là build arg.
 
 ## Thư viện dùng chung
 
-Libs là npm workspace package, được import theo tên (`@platform/shared-types`),
+Libs là pnpm workspace package, được import theo tên (`@platform/shared-types`),
 không phải theo path alias. Thêm lib mới:
 
 ```sh
-npx nx g @nx/js:lib libs/my-lib --name=@platform/my-lib
+pnpm nx g @nx/js:lib libs/my-lib --name=@platform/my-lib
 ```
 
 Rồi khai báo nó vào `dependencies` của app nào cần. Nx tự lo thứ tự build qua
@@ -116,12 +145,12 @@ docker compose up --build     # web :3000, api :3333
 `.github/workflows/ci.yml` chạy `nx affected -t lint typecheck test build` rồi
 e2e, sau đó build thử hai Docker image trên push vào `main`/`master`.
 
-Muốn có remote cache và task distribution thì chạy `npx nx connect`.
+Muốn có remote cache và task distribution thì chạy `pnpm nx connect`.
 
 ## Vài lệnh Nx hay dùng
 
 ```sh
-npx nx show project @platform/api --web   # xem mọi target của một project
-npx nx graph                              # đồ thị phụ thuộc
-npx nx reset                              # xoá cache khi nghi ngờ stale
+pnpm nx show project @platform/api --web   # xem mọi target của một project
+pnpm nx graph                              # đồ thị phụ thuộc
+pnpm nx reset                              # xoá cache khi nghi ngờ stale
 ```

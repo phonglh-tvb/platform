@@ -23,27 +23,29 @@ jobs:
           # nx affected needs history to diff against the base branch.
           fetch-depth: 0
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
       # Sets NX_BASE / NX_HEAD for `nx affected`.
       - uses: nrwl/nx-set-shas@v4
 
       - name: Formatting
-        run: npx nx format:check
+        run: pnpm nx format:check
 
       - name: Lint, typecheck, test, build
-        run: npx nx affected -t lint typecheck test build
+        run: pnpm nx affected -t lint typecheck test build
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: pnpm playwright install --with-deps chromium
 
       - name: E2E
-        run: npx nx affected -t e2e
+        run: pnpm nx affected -t e2e
 
       - uses: actions/upload-artifact@v4
         if: failure()
@@ -63,16 +65,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
       - name: Lint commit messages
         run: >-
-          npx commitlint
+          pnpm commitlint
           --from ${{ github.event.pull_request.base.sha }}
           --to ${{ github.event.pull_request.head.sha }}
           --verbose

@@ -43,7 +43,7 @@
         "executor": "@nx/js:prune-lockfile",
         "outputs": [
           "{workspaceRoot}/apps/api/dist/package.json",
-          "{workspaceRoot}/apps/api/dist/package-lock.json"
+          "{workspaceRoot}/apps/api/dist/pnpm-lock.yaml"
         ],
         "options": {
           "buildTarget": "build"
@@ -96,7 +96,8 @@
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
-    "@platform/shared-types": "0.0.1",
+    "@platform/shared-types": "workspace:*",
+    "@swc/helpers": "~0.5.18",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0"

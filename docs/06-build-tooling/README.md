@@ -9,7 +9,7 @@ _(chưa có file nào)_
 ### Nx
 
 - [ ] Monorepo giải quyết vấn đề gì, đánh đổi ra sao
-- [ ] Project graph — `npm run graph`
+- [ ] Project graph — `pnpm graph`
 - [ ] Target, executor, configuration
 - [ ] **Inferred target**: plugin trong `nx.json` tự sinh target, không cần khai
       báo tay. Xem bằng `nx show project <tên> --web`
@@ -60,8 +60,8 @@ _(chưa có file nào)_
 Lệnh hay dùng khi mò:
 
 ```sh
-npx nx show project @platform/api --web   # target nào ở đâu ra
-npx nx graph                              # đồ thị phụ thuộc
-npx nx reset                              # nghi cache stale
-npx nx run-many -t build --verbose
+pnpm nx show project @platform/api --web   # target nào ở đâu ra
+pnpm nx graph                              # đồ thị phụ thuộc
+pnpm nx reset                              # nghi cache stale
+pnpm nx run-many -t build --verbose
 ```

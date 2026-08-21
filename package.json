@@ -2,6 +2,10 @@
   "name": "@platform/source",
   "version": "0.0.0",
   "license": "MIT",
+  "packageManager": "pnpm@11.22.0",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "nx run-many -t dev serve -p @platform/web @platform/api",
     "dev:web": "nx dev @platform/web",
@@ -85,9 +89,5 @@
     "unplugin-swc": "^1.5.1",
     "vite": "^7.0.0",
     "vitest": "^3.2.4"
-  },
-  "workspaces": [
-    "apps/*",
-    "libs/*"
-  ]
+  }
 }

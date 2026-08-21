@@ -1,24 +1,33 @@
 # syntax=docker/dockerfile:1
 # Build from the workspace root:  docker build -f apps/api/Dockerfile .
 
-FROM node:22-alpine AS builder
-WORKDIR /workspace
+ARG PNPM_VERSION=11.22.0
 
-COPY package.json package-lock.json nx.json tsconfig.base.json tsconfig.json ./
+FROM node:22-alpine AS builder
+ARG PNPM_VERSION
+WORKDIR /workspace
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml nx.json tsconfig.base.json tsconfig.json ./
 COPY apps ./apps
 COPY libs ./libs
 
-RUN npm ci
-# `prune` runs build + copies workspace libs + writes a pruned package-lock.json
-# into apps/api/dist, so the runtime stage installs only what the API needs.
-RUN npx nx prune @platform/api
+# --frozen-lockfile: fail thay vì tự sửa lockfile nếu nó lệch với package.json.
+RUN pnpm install --frozen-lockfile
+# `prune` chạy build + copy workspace lib + ghi pnpm-lock.yaml rút gọn vào
+# apps/api/dist, nhờ đó stage runtime chỉ cài đúng thứ API cần.
+RUN pnpm nx prune @platform/api
 
 FROM node:22-alpine AS runner
+ARG PNPM_VERSION
 ENV NODE_ENV=production
 WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 COPY --from=builder /workspace/apps/api/dist ./
-RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts \
+  && pnpm store prune \
+  && chown -R node:node /app
 
 USER node
 EXPOSE 3333

@@ -10,7 +10,7 @@ _(chưa có file nào)_
 
 - [ ] Image vs container vs layer
 - [ ] Mỗi lệnh `Dockerfile` tạo một layer — thứ tự quyết định cache hit
-- [ ] Vì sao `COPY package*.json` rồi `npm ci` **trước** khi copy source
+- [ ] Vì sao `COPY package.json pnpm-lock.yaml` rồi `pnpm install` **trước** khi copy source
 - [ ] **Multi-stage build**: builder có toàn bộ toolchain, runner thì không
 - [ ] `.dockerignore` — không có nó thì `node_modules` local chui vào image
 - [ ] `USER node`: đừng chạy bằng root
@@ -38,8 +38,8 @@ _(chưa có file nào)_
 | Loại trừ              | [.dockerignore](../../.dockerignore)                       |
 
 Chỗ đáng đọc kỹ nhất là `apps/api/Dockerfile`: nó chạy `nx prune @platform/api`
-để sinh ra một `package-lock.json` rút gọn cùng thư mục `workspace_modules`,
-nhờ đó stage runner chỉ `npm ci` đúng những dependency API cần — không kéo theo
+để sinh ra một `pnpm-lock.yaml` rút gọn cùng thư mục `workspace_modules`,
+nhờ đó stage runner chỉ `pnpm install --prod` đúng những dependency API cần — không kéo theo
 Nx, TypeScript hay React.
 
 Lưu ý: image chưa từng được build thử trên máy này.

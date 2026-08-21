@@ -10,7 +10,9 @@ services:
     ports:
       - '3333:3333'
     healthcheck:
-      test: ['CMD', 'wget', '-qO-', 'http://localhost:3333/api/health']
+      # 127.0.0.1 chứ không phải localhost: trong image alpine, localhost resolve
+      # ra ::1 (IPv6) trong khi Node bind 0.0.0.0 (IPv4) nên sẽ bị refuse.
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3333/api/health']
       interval: 10s
       timeout: 3s
       retries: 5

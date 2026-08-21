@@ -1,0 +1,30 @@
+packages:
+  - 'apps/*'
+  - 'libs/*'
+
+# --- Phòng thủ chuỗi cung ứng ---------------------------------------------
+# Ba tuỳ chọn dưới đây là mặc định của pnpm 11; ghi rõ ra để biết mà chỉnh,
+# và để không bị đổi ngầm nếu sau này pnpm đổi mặc định.
+
+# Package phải publish đủ 24h mới cho cài. Malware thường bị gỡ trong vài giờ
+# đầu, nên khoảng chờ này chặn được phần lớn các vụ chiếm quyền publish.
+# Cần cài gấp một bản vừa ra: pnpm add <pkg> --config.minimumReleaseAge=0
+minimumReleaseAge: 1440
+
+# Chặn transitive dependency kéo code từ git repo hoặc tarball URL.
+blockExoticSubdeps: true
+
+# Install fail nếu có dependency chạy install script mà chưa khai báo bên dưới.
+strictDepBuilds: true
+
+# Chỉ những package này được chạy install script. Thêm mới bằng
+# `pnpm approve-builds` rồi đọc lại diff trước khi commit.
+allowBuilds:
+  '@parcel/watcher': true # nx theo dõi thay đổi file
+  '@swc/core': true # binary Rust để build API
+  esbuild: true # vite dùng khi dev/bundle
+  fsevents: true # watcher của macOS
+  nx: true # binary native của nx
+  sharp: true # tối ưu ảnh của Next
+  unrs-resolver: true # resolver của eslint-plugin-import
+  less: false # không dùng Less, không cần build

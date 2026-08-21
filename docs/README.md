@@ -10,7 +10,7 @@ buộc học tuần tự.
 | ------------------------------------- | --------------------------------------------- |
 | [01-javascript](01-javascript/)       | Ngôn ngữ thuần: scope, `this`, async, module  |
 | [02-typescript](02-typescript/)       | Type system, generics, decorator, tsconfig    |
-| [03-nodejs](03-nodejs/)               | Runtime, module resolution, npm workspaces    |
+| [03-nodejs](03-nodejs/)               | Runtime, module resolution, pnpm workspaces   |
 | [04-react-nextjs](04-react-nextjs/)   | React 19, Next.js App Router                  |
 | [05-nestjs](05-nestjs/)               | DI, module, controller, provider              |
 | [06-build-tooling](06-build-tooling/) | Nx, SWC, Vite, ESLint/Prettier                |

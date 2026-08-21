@@ -24,24 +24,44 @@ _(chưa có file nào)_
 - [ ] **Conditional exports** và custom condition — repo dùng
       `@platform/source` để IDE nhảy thẳng vào source thay vì `dist`
 
-### npm
+### Package manager
 
 - [ ] `dependencies` vs `devDependencies` vs `peerDependencies`
-- [ ] Semver: `^` `~` và cái gì được nâng khi `npm install`
-- [ ] `package-lock.json` để làm gì, vì sao CI phải dùng `npm ci`
-- [ ] **npm workspaces**: nhiều package trong một repo, symlink vào
-      `node_modules`
-- [ ] `npm audit`, install script và rủi ro của chúng
+- [ ] Semver: `^` `~` và cái gì được nâng khi cài lại
+- [ ] Lockfile để làm gì, vì sao CI phải dùng `--frozen-lockfile`
+- [ ] **Workspaces**: nhiều package trong một repo, link vào `node_modules`
+- [ ] Giao thức `workspace:*` — khác gì với ghi số phiên bản
+- [ ] `packageManager` + corepack: ghim version cho cả team và CI
+
+### pnpm và chuỗi cung ứng
+
+- [ ] `node_modules` phẳng (npm) vs symlink + content store (pnpm)
+- [ ] **Phantom dependency**: import package không khai báo mà vẫn chạy
+- [ ] `minimumReleaseAge` — khoảng chờ trước khi cho cài bản mới
+- [ ] `allowBuilds` / `strictDepBuilds` — install script không còn chạy tự do
+- [ ] `blockExoticSubdeps` — chặn dep kéo từ git/tarball
+- [ ] Vụ Shai-Hulud và vì sao khoảng chờ 24h lại hiệu quả đến vậy
 
 ## Xem trong repo
 
-| Khái niệm                    | File                                                                   |
-| ---------------------------- | ---------------------------------------------------------------------- |
-| Khai báo workspaces          | [package.json](../../package.json)                                     |
-| `exports` + custom condition | [libs/shared-types/package.json](../../libs/shared-types/package.json) |
-| Lib phụ thuộc app            | [apps/api/package.json](../../apps/api/package.json)                   |
-| Đọc env                      | [apps/api/src/app/app.module.ts](../../apps/api/src/app/app.module.ts) |
-| Env mẫu                      | [.env.example](../../.env.example)                                     |
+| Khái niệm                     | File                                                                   |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| Workspaces + cấu hình bảo mật | [pnpm-workspace.yaml](../../pnpm-workspace.yaml)                       |
+| Ghim version pnpm             | [package.json](../../package.json)                                     |
+| `exports` + custom condition  | [libs/shared-types/package.json](../../libs/shared-types/package.json) |
+| `workspace:*`                 | [apps/web/package.json](../../apps/web/package.json)                   |
+| Đọc env                       | [apps/api/src/app/app.module.ts](../../apps/api/src/app/app.module.ts) |
+| Env mẫu                       | [.env.example](../../.env.example)                                     |
 
-Thí nghiệm đáng làm: chạy `ls -la node_modules/@platform` — sẽ thấy symlink trỏ
-ngược về `libs/`. Đó là toàn bộ "phép màu" của npm workspaces.
+Hai thí nghiệm đáng làm:
+
+```sh
+ls -la apps/web/node_modules/@platform   # symlink trỏ ngược về libs/
+ls apps/api/node_modules                 # chỉ thấy dep api khai báo, không có next/react
+```
+
+Cái thứ hai chính là điểm khác biệt lớn nhất so với npm. Với npm hoisting phẳng,
+`apps/api` nhìn thấy toàn bộ dependency của cả monorepo, nên `import 'next'`
+trong code API vẫn chạy trên máy — rồi vỡ lúc đóng Docker. Xem
+[decisions.md](../09-this-project/decisions.md) để biết bug thật kiểu này đã xảy
+ra trong repo.

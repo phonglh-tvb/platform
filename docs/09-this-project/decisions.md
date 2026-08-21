@@ -4,6 +4,61 @@ Ghi lại lựa chọn và phương án đã loại. Thêm mục mới ở **tr�
 
 ---
 
+## 2026-08-21 — npm → pnpm
+
+**Lý do chính là bảo mật chuỗi cung ứng.** pnpm 11 bật sẵn ba thứ npm CLI không
+có, xem [pnpm-workspace.yaml](../../pnpm-workspace.yaml):
+
+- `minimumReleaseAge: 1440` — package phải publish đủ 24h mới cho cài. Với các
+  vụ chiếm quyền publish kiểu Shai-Hulud, malware thường bị phát hiện và gỡ
+  trong vài giờ đầu, nên khoảng chờ này chặn được phần lớn. npm không có cơ chế
+  tương đương.
+- `strictDepBuilds: true` — install **fail** nếu dependency có install script
+  chưa được duyệt. Trước đây npm chỉ warn "9 packages have install scripts not
+  yet covered" rồi vẫn chạy hết.
+- `blockExoticSubdeps: true` — transitive dep không được kéo code từ git hoặc
+  tarball URL.
+
+**Bug thật mà pnpm bới ra ngay:** `.swcrc` bật `externalHelpers: true` nên code
+build ra `require('@swc/helpers/...')`, nhưng `@swc/helpers` chỉ khai báo ở
+devDependencies **gốc**, không có trong `apps/api`. `node_modules` phẳng của npm
+hoist nó lên nên chạy trên máy thì không sao — còn image Docker (chỉ cài dep đã
+khai báo) thì chết ngay khi khởi động. Nói cách khác **image npm trước giờ vẫn
+hỏng**, chỉ là chưa ai build thử nên không ai biết. Đã thêm `@swc/helpers` vào
+dependencies của api.
+
+Đây đúng là loại lỗi phantom dependency mà npm hoisting che đi.
+
+**Ba rủi ro đã kiểm tra và không xảy ra:**
+
+- `@nx/js:prune-lockfile` có bug đã biết với pnpm cho workspace dep bắc cầu
+  ([nrwl/nx#34655](https://github.com/nrwl/nx/issues/34655)). Libs ở đây không
+  lib nào phụ thuộc lib khác nên nằm ngoài phạm vi. Đã prune + cài + chạy thật.
+- Next `output: 'standalone'` + pnpm hay bị symlink treo lúc `COPY` sang stage
+  runtime ([vercel/next.js#40482](https://github.com/vercel/next.js/discussions/40482)).
+  Không xảy ra — `outputFileTracingRoot` đã trỏ đúng workspace root nên Next
+  copy file thật chứ không để lại symlink.
+- Cả hai image đã build và chạy qua `docker compose`, gồm cả proxy giữa hai
+  container.
+
+**Sửa kèm:** target `prune-lockfile` vẫn khai báo output là `package-lock.json`
+trong khi pnpm sinh ra `pnpm-lock.yaml` — sai cache của Nx, đã sửa.
+
+---
+
+## 2026-08-21 — Healthcheck dùng 127.0.0.1 chứ không phải localhost
+
+**Triệu chứng:** container api `Up ... (unhealthy)` dù log Nest báo khởi động
+thành công và curl từ máy host vẫn ra kết quả.
+
+**Nguyên nhân:** trong image alpine, `localhost` resolve ra `::1` (IPv6), còn
+Node bind `0.0.0.0` (chỉ IPv4). wget đi vào ::1 nên bị refuse.
+
+Bug này có sẵn từ lúc viết `docker-compose.yml`, không liên quan pnpm — chỉ là
+tới giờ mới có ai chạy thử compose.
+
+---
+
 ## 2026-08-21 — Git hooks: husky + lint-staged + commitlint
 
 **Chọn:** husky 9 cho hook, lint-staged cho pre-commit, commitlint với
@@ -25,7 +80,7 @@ Ghi lại lựa chọn và phương án đã loại. Thêm mục mới ở **tr�
   chốt chặn thật.
 
 **Bẫy đã tránh:** `"prepare": "husky"` an toàn trong Docker — khi không có
-`.git`, husky in cảnh báo rồi exit 0 chứ không làm hỏng `npm ci` ở builder
+`.git`, husky in cảnh báo rồi exit 0 chứ không làm hỏng `pnpm install` ở builder
 stage. Không cần `|| true`.
 
 ---
@@ -83,7 +138,7 @@ hơn, ESM không phải vật lộn.
 
 ## 2026-08-20 — API chuyển sang port 3333
 
-**Lý do:** scaffold ban đầu để cả web và api ở 3000, chạy `npm run dev` là đụng
+**Lý do:** scaffold ban đầu để cả web và api ở 3000, chạy `pnpm dev` là đụng
 nhau ngay. Next giữ 3000 (mặc định, quen thuộc hơn), API dời sang 3333.
 
 Đã cập nhật đồng bộ: `main.ts`, support file của api-e2e, `.env.example`,

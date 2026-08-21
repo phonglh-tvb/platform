@@ -35,7 +35,7 @@ _(chưa có file nào)_
 
 - [ ] `target` / `module` / `moduleResolution` — bộ ba hay gây lỗi nhất
 - [ ] `strict` mở ra những cờ con nào
-- [ ] `paths` vs npm workspaces: hai cách khác nhau để import theo tên
+- [ ] `paths` vs workspaces: hai cách khác nhau để import theo tên
 - [ ] `types`, và vì sao thiếu `["node"]` là mất `process`
 - [ ] Project references, `composite`, `tsc --build`
 
@@ -51,5 +51,5 @@ _(chưa có file nào)_
 | `types: ["node"]`              | [apps/web-e2e/tsconfig.json](../../apps/web-e2e/tsconfig.json)                                 |
 
 Bài tập tốt: sửa `MessageResponse` trong `shared-types` rồi chạy
-`npm run typecheck` — xem TS bắt lỗi ở cả web lẫn api như thế nào. Đó là toàn bộ
+`pnpm typecheck` — xem TS bắt lỗi ở cả web lẫn api như thế nào. Đó là toàn bộ
 giá trị của việc để contract vào lib chung.
