@@ -130,6 +130,18 @@ pnpm nx g @nx/js:lib libs/my-lib --name=@platform/my-lib
 Rồi khai báo nó vào `dependencies` của app nào cần. Nx tự lo thứ tự build qua
 `dependsOn: ["^build"]` trong `nx.json`.
 
+Trang **`/demo`** ([apps/web/src/app/demo/page.tsx](apps/web/src/app/demo/page.tsx))
+là ví dụ dùng cả hai lib cùng lúc: `Button` từ `@platform/ui`, kiểu phản hồi từ
+`@platform/shared-types`, gọi API qua proxy `/backend`.
+
+`@platform/ui` có kèm stylesheet, import riêng vì CSS không đi qua bước build
+của TypeScript:
+
+```ts
+import { Button } from '@platform/ui';
+import '@platform/ui/styles.css';
+```
+
 ## Docker
 
 ```sh
