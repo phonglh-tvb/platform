@@ -1,0 +1,56 @@
+/* Consumer import bằng:  import '@platform/ui/styles.css'
+   Token để ngoài :root nên app có thể ghi đè màu mà không cần sửa lib. */
+:root {
+  --ui-button-radius: 0.5rem;
+  --ui-button-primary-bg: #1f2937;
+  --ui-button-primary-fg: #ffffff;
+  --ui-button-secondary-fg: #1f2937;
+  --ui-button-border: #d1d5db;
+}
+
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--ui-button-radius);
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 500;
+  line-height: 1.25rem;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    opacity 120ms ease;
+}
+
+.ui-button:focus-visible {
+  outline: 2px solid var(--ui-button-primary-bg);
+  outline-offset: 2px;
+}
+
+.ui-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ui-button--primary {
+  background-color: var(--ui-button-primary-bg);
+  color: var(--ui-button-primary-fg);
+}
+
+.ui-button--primary:hover:not(:disabled) {
+  background-color: #111827;
+}
+
+.ui-button--secondary {
+  background-color: transparent;
+  color: var(--ui-button-secondary-fg);
+  border-color: var(--ui-button-border);
+}
+
+.ui-button--secondary:hover:not(:disabled) {
+  background-color: #f9fafb;
+}
