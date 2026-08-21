@@ -3,3 +3,10 @@
 /coverage
 /.nx/cache
 /.nx/workspace-data
+
+# Next sinh lại file này mỗi lần build với format Prettier không đồng ý, nên
+# `nx format:check` sẽ fail ngay sau mỗi lần build nếu không bỏ qua nó.
+**/next-env.d.ts
+
+# Lockfile do pnpm quản lý.
+pnpm-lock.yaml
