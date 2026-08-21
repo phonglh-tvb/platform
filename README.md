@@ -41,6 +41,36 @@ Riêng lẻ: `npm run dev:web`, `npm run dev:api`.
 | `npm run graph`     | Mở project graph                               |
 | `npm run docker:up` | `docker compose up --build`                    |
 
+## Git hooks & quy ước commit
+
+Husky cài hook tự động khi `npm install` (qua script `prepare`).
+
+| Hook         | Chạy gì                                                      |
+| ------------ | ------------------------------------------------------------ |
+| `pre-commit` | `lint-staged` — eslint `--fix` + prettier trên file đã stage |
+| `commit-msg` | `commitlint` — kiểm tra định dạng message                    |
+| `pre-push`   | `nx affected -t lint typecheck test` so với nhánh upstream   |
+
+Message theo [Conventional Commits](https://www.conventionalcommits.org/), và
+**scope là bắt buộc**:
+
+```text
+feat(web): thêm trang login
+fix(api): sửa lỗi proxy khi API_URL có dấu /
+chore(deps): nâng nx lên 23.2
+```
+
+Scope hợp lệ = tên thư mục trong `apps/` và `libs/` (`web`, `api`, `ui`,
+`shared-types`, `web-e2e`, `api-e2e`), cộng thêm `repo`, `deps`, `ci`, `docs`,
+`docker`. Danh sách này đọc từ filesystem trong
+[commitlint.config.mjs](commitlint.config.mjs) nên thêm project mới là tự có
+scope mới, không phải sửa tay.
+
+Muốn bỏ bắt buộc scope thì xoá rule `scope-empty` trong file đó.
+
+Bỏ qua hook khi thật sự cần: `git commit --no-verify`. Nhưng CI vẫn kiểm lại
+commit message trên pull request, nên đừng dựa vào nó.
+
 ## Web gọi API như thế nào
 
 `apps/web/next.config.js` rewrite `/backend/*` sang `${API_URL}/api/*`. Phía

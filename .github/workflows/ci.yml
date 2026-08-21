@@ -54,6 +54,29 @@ jobs:
             apps/web-e2e/playwright-report
           retention-days: 7
 
+  commitlint:
+    # Hooks có thể bị bỏ qua bằng `--no-verify`, nên kiểm lại ở đây mới là chốt chặn thật.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint commit messages
+        run: >-
+          npx commitlint
+          --from ${{ github.event.pull_request.base.sha }}
+          --to ${{ github.event.pull_request.head.sha }}
+          --verbose
+
   docker:
     # Only proves the images still build; publishing is left to your registry.
     runs-on: ubuntu-latest

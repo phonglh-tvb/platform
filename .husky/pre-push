@@ -1,0 +1,9 @@
+# So với nhánh upstream nếu có, để bắt được cả commit chưa push trên main.
+# Nhánh mới chưa có upstream thì rơi về defaultBase trong nx.json.
+base=$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null)
+
+if [ -n "$base" ]; then
+  npx nx affected -t lint typecheck test --base="$base"
+else
+  npx nx affected -t lint typecheck test
+fi

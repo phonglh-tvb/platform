@@ -4,6 +4,43 @@ Ghi lại lựa chọn và phương án đã loại. Thêm mục mới ở **tr�
 
 ---
 
+## 2026-08-21 — Git hooks: husky + lint-staged + commitlint
+
+**Chọn:** husky 9 cho hook, lint-staged cho pre-commit, commitlint với
+`config-conventional` cho message.
+
+**Cấu hình đáng nhớ:**
+
+- Scope trong commit message **bắt buộc** và phải nằm trong danh sách hợp lệ.
+  Danh sách đó [đọc từ filesystem](../../commitlint.config.mjs) (`apps/*` +
+  `libs/*`) chứ không viết tay — thêm project mới là tự có scope, không quên
+  cập nhật được.
+- `eslint --max-warnings=0` trong lint-staged. Mặc định eslint exit 0 khi chỉ có
+  warning, nên không có cờ này thì hook không chặn được gì. Source hiện sạch 0
+  warning nên bật ngay được; để lâu mới bật thì phải dọn cả đống.
+- pre-push so với `@{upstream}` chứ không dùng `defaultBase`. Nếu dùng
+  defaultBase thì lúc đứng trên chính `main`, `nx affected` so main với main ra
+  rỗng và hook không chạy gì cả.
+- Có thêm job `commitlint` trong CI. Hook bị `--no-verify` là qua, CI mới là
+  chốt chặn thật.
+
+**Bẫy đã tránh:** `"prepare": "husky"` an toàn trong Docker — khi không có
+`.git`, husky in cảnh báo rồi exit 0 chứ không làm hỏng `npm ci` ở builder
+stage. Không cần `|| true`.
+
+---
+
+## 2026-08-21 — Sửa `defaultBase` trong nx.json: master → main
+
+**Vấn đề:** `nx.json` để `defaultBase: "master"` nhưng repo chỉ có nhánh `main`.
+Mọi lệnh `nx affected` đều chết với `fatal: ambiguous argument 'master'`.
+
+Lỗi này nằm im vì chưa ai chạy `nx affected` — cho tới khi cài pre-push hook.
+Job CI cũng thoát nạn nhờ `nrwl/nx-set-shas` tự set `NX_BASE`/`NX_HEAD`, ghi đè
+`defaultBase`.
+
+---
+
 ## 2026-08-20 — Bỏ webpack, build API bằng SWC
 
 **Chọn:** `@nx/js:swc` + [apps/api/.swcrc](../../apps/api/.swcrc).
