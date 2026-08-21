@@ -1,0 +1,25 @@
+{
+  "name": "@platform/api-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@platform/api"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/vitest:test",
+        "outputs": [
+          "{projectRoot}/test-output/vitest/coverage"
+        ],
+        "dependsOn": [
+          "@platform/api:build",
+          "@platform/api:serve"
+        ],
+        "options": {
+          "configFile": "apps/api-e2e/vite.config.mts"
+        }
+      }
+    }
+  }
+}

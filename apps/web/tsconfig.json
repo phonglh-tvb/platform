@@ -6,11 +6,7 @@
     "emitDeclarationOnly": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -21,14 +17,9 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
-    "types": [
-      "jest",
-      "node"
-    ],
+    "types": ["node"],
     "outDir": "dist",
     "rootDir": "src",
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
@@ -47,13 +38,24 @@
     "out-tsc",
     "dist",
     "node_modules",
-    "jest.config.ts",
-    "jest.config.cts",
+    "vite.config.mts",
+    "vitest.setup.ts",
+    "specs/**/*",
     "src/**/*.spec.ts",
+    "src/**/*.spec.tsx",
     "src/**/*.test.ts",
+    "src/**/*.test.tsx",
     ".next",
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
+  ],
+  "references": [
+    {
+      "path": "../../libs/ui"
+    },
+    {
+      "path": "../../libs/shared-types"
+    }
   ]
 }

@@ -4,10 +4,22 @@
   "files": [],
   "references": [
     {
+      "path": "./libs/shared-types"
+    },
+    {
+      "path": "./libs/ui"
+    },
+    {
       "path": "./apps/web-e2e"
     },
     {
       "path": "./apps/web"
+    },
+    {
+      "path": "./apps/api-e2e"
+    },
+    {
+      "path": "./apps/api"
     }
   ]
 }
